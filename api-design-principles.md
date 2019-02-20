@@ -78,9 +78,11 @@ Use RESTful approach:
 ### Case consistency
 
 For URI's case always use 'spinal-case' (https://tools.ietf.org/html/rfc3986#section-3.3)
+
 `POST /v1/specific-orders`
 
 For body case always use 'lowerCamelCase'
+
 `POST /orders {"accountID":"007"}`
 
 ### Versioning
@@ -130,105 +132,114 @@ By default, always sort resources in ascending order. We use `+` and `-` in fron
 
 #### Filtering
 
-Always use attribute�s name with an operator and the expected values, each of them
-separated by a comma. We need to use '=', '<=', '>=' as operators
-GET /accounts?lastName=Solo
-GET /orders?amount<=500,amount>=5000
+Always use attribute's name with an operator and the expected values, each of them separated by a comma. We need to use `=`, `<=`, `>=` as operators
 
-Fields
+`GET /accounts?lastName=Solo`
+`GET /orders?amount<=500`
 
-We need to be able to select the attributes, separated by comma, to be retrieved, over 1
-level of resource.
+#### Fields
 
-GET /accounts/007?fields=firstName,lastName,address
+We need to be able to select the attributes, separated by comma, to be retrieved, over 1 evel of resource.
 
-Searching
+`GET /accounts/007?fields=firstName,lastName,address`
 
-Parameters are provided the same way as for a filter, through the query-string, but they are
-not necessarily exact values, and their syntax permits approximate matching.
+#### Searching
+
+Parameters are provided the same way as for a filter, through the query-string, but they are not necessarily exact values, and their syntax permits approximate matching.
 
 Being itself a resource, the search must support paging like all the other resources of API.
 
-Resource search is a sub-resource of our collection. As such, its results will have a different
-format than the resources and the collection itself.
+Resource search is a sub-resource of our collection. As such, its results will have a different format than the resources and the collection itself.
 
-GET /accounts/search?firstName=Han
+`GET /accounts/search?firstName=Han`
 
-URL RESERVED WORDS: OFFSET, LIMIT, SORT, SEARCH, FIRST, LAST, COUNT,
-HISTORY
+### URL RESERVED WORDS: OFFSET, LIMIT, SORT, SEARCH, FIRST, LAST, COUNT, HISTORY
 
 Use /first to get the 1st element
 
+```curl
 GET /orders/first
 200 OK
 {"id":"1234", "state":"paid"}
+```
 
 Use /last to retrieve the latest resource of a collection
 
+```curl
 GET /orders/last
 200 OK
 {"id":"5678", "state":"running"}
+```
 
 Use /count to get the current size of a collection
 
+```curl
 GET /orders/count
 200 OK
 {"2"}
+```
 
 Use /history to return history of a resource (data revision with all the changes)
 
+```curl
 GET /orders/:orderID/history
 200 OK
 {"current":{"id":"5678", "state":"running"},"history":{...}}
+```
 
-Content negotiation
+### Content negotiation
 
 By default, the API will share resources in the JSON format.
 
-Cross-domain
+### Cross-domain
 
 Implement CORS protocol by adding instructions to NodeJS HTTP server ()
 
-HATEOAS
+### HATEOAS
 
-Your API should provide Hypermedia links in order to be completely discoverable. Each call
-to the API should return in the Link header every possible state of the application from the
-current state, plus self.
+Your API should provide Hypermedia links in order to be completely discoverable. Each call to the API should return in the Link header every possible state of the application from the current state, plus self.
 
 Implement HATEOAS, using the following method, compliant with RFC5988
 
+```curl
 GET /customers/007
 200 Ok
 { "id":"007", "firstName":"Han",...}
 Link : <https://api.conda.online/v1/customers>; rel="self"; method:"GET",
 <https://api.conda.online/v1/addresses/42>; rel="addresses"; method:"GET",
 <https://api.conda.online/v1/orders/1234>; rel="orders"; method:"GET"
+```
 
 Error Structure
 We use the following JSON structure:
+
+```curl
 {
 "error": "short_description",
 "error_code": 1233,
 "error_uri": "URI to a detailed error description"
 }
+```
 
-Status codes
-SUCCESS
-200 - Success with content
-201 - Created
-202 - Accepted (to be processed later for async calls)
-204 - Success without content
-206 - Partial content (as response to requests with 'fields' query strings)
+### Status codes
 
-CLIENT ERROR
+#### SUCCESS
 
-400 - Bad Request
-401 - Unauthorized
-403 - Forbidden
-404 - Not Found
-405 - Method not allowed (Calling a method on this resource has no meaning, or the
-user is not authorized to make this call.)
-406 - Not Acceptable (Nothing matches the Accept-\* Header of the request)
-SERVER ERROR
-500 - Server error
-)
+- 200 - Success with content
+- 201 - Created
+- 202 - Accepted (to be processed later for async calls)
+- 204 - Success without content
+- 206 - Partial content (as response to requests with 'fields' query strings)
+
+### CLIENT ERROR
+
+- 400 - Bad Request
+- 401 - Unauthorized
+- 403 - Forbidden
+- 404 - Not Found
+- 405 - Method not allowed (Calling a method on this resource has no meaning, or the user is not authorized to make this call.)
+- 406 - Not Acceptable (Nothing matches the Accept-\* Header of the request)
+
+### SERVER ERROR
+
+- 500 - Server error
