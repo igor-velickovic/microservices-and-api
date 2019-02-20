@@ -115,7 +115,7 @@ In a few use cases we have to consider operations or services rather than resour
 
 ### Query strings
 
-####Paging
+#### Paging
 
 We use `offset` and `limit` query string to define paged results. It is important to include
 resource count and previous/next href to API response. Paging will be impacted by sorting and filtering. The combination of these 3 parameters should be usable with consistency in the requests to API.
